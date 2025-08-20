@@ -1,0 +1,58 @@
+﻿<Window x:Class="Network_Traffic_Dash.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:wv2="clr-namespace:Microsoft.Web.WebView2.Wpf;assembly=Microsoft.Web.WebView2.Wpf"
+        Title="Network Traffic Dash" Height="720" Width="1200"
+        Loaded="Window_Loaded" Closed="Window_Closed">
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="2.3*"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <wv2:WebView2 x:Name="Web" Grid.Column="0" Source="about:blank"/>
+        <TabControl Grid.Column="1" x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
+            <!-- Live -->
+            <TabItem Header="Live">
+                <DockPanel LastChildFill="True">
+                    <TextBox x:Name="SearchLive" DockPanel.Dock="Top" Margin="8"
+                   ToolTip="Søg (proc, ip, proto, port)"
+                   TextChanged="SearchLive_TextChanged"/>
+                    <ListView x:Name="TopListLive" Margin="8">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Proc"  DisplayMemberBinding="{Binding Proc}" Width="140"/>
+                                <GridViewColumn Header="Dst"   DisplayMemberBinding="{Binding Dst}"  Width="150"/>
+                                <GridViewColumn Header="Port"  DisplayMemberBinding="{Binding Port}" Width="60"/>
+                                <GridViewColumn Header="Proto" DisplayMemberBinding="{Binding Proto}" Width="60"/>
+                                <GridViewColumn Header="Bytes/s" DisplayMemberBinding="{Binding Bps}" Width="90"/>
+                                <GridViewColumn Header="Count" DisplayMemberBinding="{Binding Count}" Width="60"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+            </TabItem>
+
+            <!-- Historik -->
+            <TabItem Header="Historik">
+                <DockPanel LastChildFill="True">
+                    <TextBox x:Name="SearchHist" DockPanel.Dock="Top" Margin="8"
+                   ToolTip="Søg (org, ip, land, proto)"
+                   TextChanged="SearchHist_TextChanged"/>
+                    <ListView x:Name="TopListHist" Margin="8">
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="Org"   DisplayMemberBinding="{Binding Org}" Width="180"/>
+                                <GridViewColumn Header="Dst"   DisplayMemberBinding="{Binding Dst}" Width="150"/>
+                                <GridViewColumn Header="Land"  DisplayMemberBinding="{Binding Country}" Width="80"/>
+                                <GridViewColumn Header="Proto" DisplayMemberBinding="{Binding Proto}" Width="60"/>
+                                <GridViewColumn Header="Bytes (tot)" DisplayMemberBinding="{Binding Bytes}" Width="110"/>
+                                <GridViewColumn Header="Flows" DisplayMemberBinding="{Binding Count}" Width="70"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                </DockPanel>
+            </TabItem>
+        </TabControl>
+    </Grid>
+</Window>
