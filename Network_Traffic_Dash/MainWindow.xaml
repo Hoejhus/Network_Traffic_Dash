@@ -10,18 +10,15 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
-        <!-- WebView2 til kortet -->
         <wv2:WebView2 x:Name="Web" Grid.Column="0" Source="about:blank"/>
 
-        <!-- Sidepanel med tabs -->
         <TabControl Grid.Column="1" x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
-            <!-- Live -->
             <TabItem Header="Live">
                 <DockPanel LastChildFill="True">
                     <TextBox x:Name="SearchLive" DockPanel.Dock="Top" Margin="8"
                    ToolTip="Søg (proc, ip, proto, port)"
                    TextChanged="SearchLive_TextChanged"/>
-                    <ListView x:Name="TopListLive" Margin="8">
+                    <ListView x:Name="TopListLive" Margin="8" MouseDoubleClick="TopListLive_DoubleClick">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Proc"    DisplayMemberBinding="{Binding Proc}"  Width="140"/>
@@ -36,13 +33,12 @@
                 </DockPanel>
             </TabItem>
 
-            <!-- Historik -->
             <TabItem Header="Historik">
                 <DockPanel LastChildFill="True">
                     <TextBox x:Name="SearchHist" DockPanel.Dock="Top" Margin="8"
                    ToolTip="Søg (org, ip, land, proto)"
                    TextChanged="SearchHist_TextChanged"/>
-                    <ListView x:Name="TopListHist" Margin="8">
+                    <ListView x:Name="TopListHist" Margin="8" MouseDoubleClick="TopListHist_DoubleClick">
                         <ListView.View>
                             <GridView>
                                 <GridViewColumn Header="Org"        DisplayMemberBinding="{Binding Org}"     Width="180"/>

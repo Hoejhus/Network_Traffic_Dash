@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using System.Windows.Input;
 
 namespace Network_Traffic_Dash;
 
@@ -46,19 +47,16 @@ public partial class MainWindow : Window
 
         var (liveRows, histRows, livePoints, histPoints) = _agg.Snapshot();
 
-        // Live-liste + søgning
         TopListLive.ItemsSource = liveRows;
         _liveView ??= CollectionViewSource.GetDefaultView(TopListLive.ItemsSource);
         _liveView.Filter = LiveFilter;
         _liveView.Refresh();
 
-        // Historik-liste + søgning
         TopListHist.ItemsSource = histRows;
         _histView ??= CollectionViewSource.GetDefaultView(TopListHist.ItemsSource);
         _histView.Filter = HistFilter;
         _histView.Refresh();
 
-        // Map payload (sender kun aktivt sæt)
         if (_mapReady)
         {
             var payload = new
@@ -71,13 +69,14 @@ public partial class MainWindow : Window
                 var json = JsonSerializer.Serialize(payload);
                 Web.CoreWebView2.PostWebMessageAsJson(json);
             }
-            catch { /* små races kan ignoreres */ }
+            catch { }
         }
     }
 
     private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         => _mode = (Tabs.SelectedIndex == 0) ? "live" : "history";
 
+    // --- søgning ---
     private bool LiveFilter(object o)
     {
         if (o is not FlowAggregator.LiveRow r) return true;
@@ -86,7 +85,6 @@ public partial class MainWindow : Window
         q = q!.ToLowerInvariant();
         return $"{r.Proc} {r.Dst} {r.Port} {r.Proto}".ToLowerInvariant().Contains(q);
     }
-
     private bool HistFilter(object o)
     {
         if (o is not FlowAggregator.HistRow r) return true;
@@ -95,9 +93,29 @@ public partial class MainWindow : Window
         q = q!.ToLowerInvariant();
         return $"{r.Org} {r.Dst} {r.Country} {r.Proto}".ToLowerInvariant().Contains(q);
     }
-
     private void SearchLive_TextChanged(object s, TextChangedEventArgs e) => _liveView?.Refresh();
     private void SearchHist_TextChanged(object s, TextChangedEventArgs e) => _histView?.Refresh();
+    private void TopListLive_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (TopListLive.SelectedItem is FlowAggregator.LiveRow row)
+            FocusIp(row.Dst);
+    }
+    private void TopListHist_DoubleClick(object sender, MouseButtonEventArgs e)
+    {
+        if (TopListHist.SelectedItem is FlowAggregator.HistRow row)
+            FocusIp(row.Dst);
+    }
+    private void FocusIp(string ip)
+    {
+        if (!_mapReady || string.IsNullOrWhiteSpace(ip)) return;
+        var cmd = new { cmd = "focus", ip };
+        try
+        {
+            var json = JsonSerializer.Serialize(cmd);
+            Web.CoreWebView2.PostWebMessageAsJson(json);
+        }
+        catch { }
+    }
 
     private void Window_Closed(object sender, EventArgs e)
     {
