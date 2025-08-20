@@ -10,7 +10,10 @@
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
 
+        <!-- WebView2 til kortet -->
         <wv2:WebView2 x:Name="Web" Grid.Column="0" Source="about:blank"/>
+
+        <!-- Sidepanel med tabs -->
         <TabControl Grid.Column="1" x:Name="Tabs" SelectionChanged="Tabs_SelectionChanged">
             <!-- Live -->
             <TabItem Header="Live">
@@ -21,12 +24,12 @@
                     <ListView x:Name="TopListLive" Margin="8">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Proc"  DisplayMemberBinding="{Binding Proc}" Width="140"/>
-                                <GridViewColumn Header="Dst"   DisplayMemberBinding="{Binding Dst}"  Width="150"/>
-                                <GridViewColumn Header="Port"  DisplayMemberBinding="{Binding Port}" Width="60"/>
-                                <GridViewColumn Header="Proto" DisplayMemberBinding="{Binding Proto}" Width="60"/>
-                                <GridViewColumn Header="Bytes/s" DisplayMemberBinding="{Binding Bps}" Width="90"/>
-                                <GridViewColumn Header="Count" DisplayMemberBinding="{Binding Count}" Width="60"/>
+                                <GridViewColumn Header="Proc"    DisplayMemberBinding="{Binding Proc}"  Width="140"/>
+                                <GridViewColumn Header="Dst"     DisplayMemberBinding="{Binding Dst}"   Width="150"/>
+                                <GridViewColumn Header="Port"    DisplayMemberBinding="{Binding Port}"  Width="60"/>
+                                <GridViewColumn Header="Proto"   DisplayMemberBinding="{Binding Proto}" Width="60"/>
+                                <GridViewColumn Header="Bytes/s" DisplayMemberBinding="{Binding Bps}"   Width="90"/>
+                                <GridViewColumn Header="Count"   DisplayMemberBinding="{Binding Count}" Width="60"/>
                             </GridView>
                         </ListView.View>
                     </ListView>
@@ -42,12 +45,12 @@
                     <ListView x:Name="TopListHist" Margin="8">
                         <ListView.View>
                             <GridView>
-                                <GridViewColumn Header="Org"   DisplayMemberBinding="{Binding Org}" Width="180"/>
-                                <GridViewColumn Header="Dst"   DisplayMemberBinding="{Binding Dst}" Width="150"/>
-                                <GridViewColumn Header="Land"  DisplayMemberBinding="{Binding Country}" Width="80"/>
-                                <GridViewColumn Header="Proto" DisplayMemberBinding="{Binding Proto}" Width="60"/>
-                                <GridViewColumn Header="Bytes (tot)" DisplayMemberBinding="{Binding Bytes}" Width="110"/>
-                                <GridViewColumn Header="Flows" DisplayMemberBinding="{Binding Count}" Width="70"/>
+                                <GridViewColumn Header="Org"        DisplayMemberBinding="{Binding Org}"     Width="180"/>
+                                <GridViewColumn Header="Dst"        DisplayMemberBinding="{Binding Dst}"     Width="150"/>
+                                <GridViewColumn Header="Land"       DisplayMemberBinding="{Binding Country}" Width="80"/>
+                                <GridViewColumn Header="Proto"      DisplayMemberBinding="{Binding Proto}"   Width="60"/>
+                                <GridViewColumn Header="Bytes (tot)" DisplayMemberBinding="{Binding Bytes}"   Width="110"/>
+                                <GridViewColumn Header="Flows"      DisplayMemberBinding="{Binding Count}"   Width="70"/>
                             </GridView>
                         </ListView.View>
                     </ListView>

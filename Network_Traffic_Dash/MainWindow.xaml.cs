@@ -13,9 +13,9 @@ public partial class MainWindow : Window
     private readonly EtwListener _etw = new();
     private readonly GeoService _geo = new();
     private FlowAggregator? _agg;
-    private readonly System.Timers.Timer _tick = new System.Timers.Timer(1000);
+    private readonly System.Timers.Timer _tick = new System.Timers.Timer(1000); // 1 s
     private bool _mapReady;
-    private string _mode = "live";
+    private string _mode = "live"; // "live" | "history"
 
     private ICollectionView? _liveView;
     private ICollectionView? _histView;
@@ -46,18 +46,19 @@ public partial class MainWindow : Window
 
         var (liveRows, histRows, livePoints, histPoints) = _agg.Snapshot();
 
-        // Live-liste
+        // Live-liste + søgning
         TopListLive.ItemsSource = liveRows;
         _liveView ??= CollectionViewSource.GetDefaultView(TopListLive.ItemsSource);
         _liveView.Filter = LiveFilter;
         _liveView.Refresh();
 
-        // Historik-liste
+        // Historik-liste + søgning
         TopListHist.ItemsSource = histRows;
         _histView ??= CollectionViewSource.GetDefaultView(TopListHist.ItemsSource);
         _histView.Filter = HistFilter;
         _histView.Refresh();
 
+        // Map payload (sender kun aktivt sæt)
         if (_mapReady)
         {
             var payload = new
@@ -70,32 +71,31 @@ public partial class MainWindow : Window
                 var json = JsonSerializer.Serialize(payload);
                 Web.CoreWebView2.PostWebMessageAsJson(json);
             }
-            catch {}
+            catch { /* små races kan ignoreres */ }
         }
     }
 
     private void Tabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
-    {
-        _mode = (Tabs.SelectedIndex == 0) ? "live" : "history";
-    }
+        => _mode = (Tabs.SelectedIndex == 0) ? "live" : "history";
 
-    // --- søgning ---
     private bool LiveFilter(object o)
     {
         if (o is not FlowAggregator.LiveRow r) return true;
-        var q = SearchLive.Text?.Trim() ?? "";
+        var q = SearchLive.Text?.Trim();
         if (string.IsNullOrEmpty(q)) return true;
-        q = q.ToLowerInvariant();
+        q = q!.ToLowerInvariant();
         return $"{r.Proc} {r.Dst} {r.Port} {r.Proto}".ToLowerInvariant().Contains(q);
     }
+
     private bool HistFilter(object o)
     {
         if (o is not FlowAggregator.HistRow r) return true;
-        var q = SearchHist.Text?.Trim() ?? "";
+        var q = SearchHist.Text?.Trim();
         if (string.IsNullOrEmpty(q)) return true;
-        q = q.ToLowerInvariant();
+        q = q!.ToLowerInvariant();
         return $"{r.Org} {r.Dst} {r.Country} {r.Proto}".ToLowerInvariant().Contains(q);
     }
+
     private void SearchLive_TextChanged(object s, TextChangedEventArgs e) => _liveView?.Refresh();
     private void SearchHist_TextChanged(object s, TextChangedEventArgs e) => _histView?.Refresh();
 
